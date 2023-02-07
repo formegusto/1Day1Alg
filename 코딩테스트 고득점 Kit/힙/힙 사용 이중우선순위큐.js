@@ -75,8 +75,6 @@ function solution(operations) {
   const maxHeap = new Heap("max");
 
   for (let i = 0; i < operations.length; i++) {
-    console.log("minHeap", minHeap.heap);
-    console.log("maxHeap", maxHeap.heap);
     switch (operations[i]) {
       case "D 1":
         maxHeap.heappop();
