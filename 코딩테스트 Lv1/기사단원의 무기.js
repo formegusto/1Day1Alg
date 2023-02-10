@@ -1,28 +1,27 @@
-function getPower(n, limit, limitPower) {
-  let power = 0;
-  for (let i = 1; i <= Math.floor(n ** 0.5) + 1; i++) {
+function getDivisors(n) {
+  const result = [];
+
+  for (let i = 1; i * i <= n; i++) {
     if (n % i === 0) {
-      power++;
-    }
-    if (i !== Math.floor(n / i)) {
-      power++;
-    }
-    if (power > limit) {
-      power = limitPower;
-      break;
+      result.push(i);
+      const back = (n / i) >> 0;
+      if (back !== i) result.push(back);
     }
   }
 
-  return power;
+  return result;
 }
 
 function solution(number, limit, power) {
   let answer = 0;
 
   for (let i = 1; i <= number; i++) {
-    answer += getPower(i, limit, power);
-    console.log(i, answer);
+    const divisors = getDivisors(i);
+    if (divisors.length > limit) answer += power;
+    else answer += divisors.length;
   }
 
   return answer;
 }
+
+solution(5, 3, 2);
