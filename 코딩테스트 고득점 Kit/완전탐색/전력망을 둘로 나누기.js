@@ -21,8 +21,10 @@ function DFS(grid, id, visited) {
 function solution(n, wires) {
   let answer = -1;
 
-  for (let i = 0; i < wires.length; i++) {
-    const _wires = [...wires.slice(0, i), ...wires.slice(i + 1)];
+  wires.sort((a, b) => a[0] - b[0]);
+
+  for (let sliceIdx = -1; sliceIdx < wires.length; sliceIdx++) {
+    const _wires = [...wires.slice(0, sliceIdx), ...wires.slice(sliceIdx + 1)];
     const grid = _wires.reduce((acc, cur) => {
       acc[cur[0]] ? acc[cur[0]].push(cur[1]) : (acc[cur[0]] = [cur[1]]);
 
@@ -64,11 +66,18 @@ function solution(n, wires) {
           itemCounts[i] = itemCount;
         }
       }
+      if (gridCount > 2) break;
     }
 
     const [grid1, grid2] = Object.entries(itemCounts);
-    const err = Math.abs(grid1[1].length - grid2[1].length);
-    if (answer === -1 || answer > err) answer = err;
+
+    if (grid2) {
+      const err = Math.abs(grid1[1].length - grid2[1].length);
+      if (answer === -1 || answer > err) {
+        console.log(_wires, grid, grid1, grid2);
+        answer = err;
+      }
+    }
   }
 
   return answer;
@@ -84,6 +93,16 @@ console.log(
     [4, 7],
     [7, 8],
     [7, 9],
+  ])
+);
+
+console.log(
+  solution(6, [
+    [1, 4],
+    [6, 3],
+    [2, 5],
+    [5, 1],
+    [5, 3],
   ])
 );
 
