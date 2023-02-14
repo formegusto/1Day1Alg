@@ -1,3 +1,4 @@
+// 분할과 정복 방식
 // [ 초깃값, 정답 ]
 /**
  *
@@ -33,8 +34,7 @@ function getMoveCount(init, answer, start, count, direction, depth) {
     "right",
     depth + 1
   );
-
-  console.log(depth);
+  console.log(depth, leftStart, rightStart, leftCount, rightCount);
 
   return count + Math.min(leftCount, rightCount);
 }
@@ -43,18 +43,27 @@ function solution(name) {
   let answer = 0;
   let initName = "A".repeat(name.length);
 
-  answer += getMoveCount(initName, name, 0, 0, null, 1);
+  answer += Math.min(
+    getMoveCount(initName, name, 0, 0, "left", 1),
+    getMoveCount(initName, name, 0, 0, "right", 1)
+  );
+
+  console.log(answer);
+
   for (let i = 0; i < name.length; i++) {
     if (name[i] !== "A")
       answer += Math.min(name.charCodeAt(i) - 65, 90 - name.charCodeAt(i) + 1);
   }
+
   return answer;
 }
 
-// solution("JEROEN");
-// solution("JAN");
-
-// solution("JEAAAAN");
-// solution("JEAAANEA");
-
-solution("JEZZEZAAAJEAAAAAAZS");
+console.log(solution("JEROEN"), "\n");
+console.log(solution("JAN"), "\n");
+console.log(solution("JEAAAAN"), "\n");
+// console.log(solution("JEAAANEA"), "\n");
+console.log(solution("AAAAAJEJE"), "\n");
+console.log(solution("AAAAAAAAA"), "\n");
+console.log(solution("JEAAANEAAAAZ"), "\n");
+console.log(solution("AEAAANEAAAAA"), "\n");
+// console.log(solution("JEAAANEAAAAZ"));
