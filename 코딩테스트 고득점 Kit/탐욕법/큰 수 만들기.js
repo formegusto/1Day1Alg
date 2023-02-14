@@ -1,23 +1,27 @@
-function permutation(arr, r) {
-  if (r === 1) return arr.map((v) => [v]);
+function solution(number, k) {
+  const stack = [];
 
-  const result = [];
+  for (let i = 0; i < number.length; i++) {
+    if (!stack.length) {
+      stack.push(number[i]);
+      continue;
+    }
 
-  for (let i = 0; i < arr.length; i++) {
-    const rest = [...arr.slice(0, i), ...arr.slice(i + 1)];
-    const perms = permutation(rest, r - 1);
-    const attached = perms.map((p) => [arr[i], ...p]);
-    result.push(...attached);
+    while (stack.length && k && stack[stack.length - 1] < number[i]) {
+      stack.pop();
+      k--;
+    }
+
+    stack.push(number[i]);
   }
 
-  return result;
-}
+  while (k) {
+    stack.pop();
+    k--;
+  }
 
-function solution(number, k) {
-  let perms = permutation(number, number.length - k);
-  perms = perms.map((p) => Number(p.join(""))).sort((a, b) => b - a);
-
-  return perms[0];
+  return stack.join("");
 }
 
 console.log(solution("1924", 2));
+console.log(solution("4321", 1, "432"));
