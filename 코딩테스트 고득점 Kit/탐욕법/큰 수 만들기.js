@@ -1,3 +1,5 @@
+// 당장에 스택에 넣는 것이 커야한다 !
+
 function solution(number, k) {
   const stack = [];
 
