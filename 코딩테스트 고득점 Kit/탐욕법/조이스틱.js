@@ -67,3 +67,5 @@ console.log(solution("AAAAAAAAA"), "\n");
 console.log(solution("JEAAANEAAAAZ"), "\n");
 console.log(solution("AEAAANEAAAAA"), "\n");
 // console.log(solution("JEAAANEAAAAZ"));
+
+// 이건 나중에 포스팅 해야겠다!
