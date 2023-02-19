@@ -12,8 +12,6 @@ def dp(road, r, c, acc):
                 road[r][c] = [acc, 1]
             elif road[r][c][0] == acc:
                 road[r][c] = [acc, road[r][c][1] + 1]
-        
-        print(road)
         return
     
     if road[r][c] == 0:
