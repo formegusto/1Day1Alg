@@ -1,13 +1,16 @@
 // 내 솔루션은 모양을 캐치하는 DFS를 만드는 것임
 // gameBoard의 0의 모양 캐치
 // table은 1의 모양 캐치
+// + 부분적으로 해결할 수 있는 경우도 있음.
+// gameboard를 탐색하는 파트는 다르게 진행
 
 const dr = [-1, 1, 0, 0];
 const dc = [0, 0, -1, 1];
 let R, C;
 let visited;
+let posBlock;
 
-function DFS(maps, r, c, neg) {
+function tableDFS(maps, r, c) {
   visited[r][c] = true;
 
   // 블록 정보
@@ -15,9 +18,8 @@ function DFS(maps, r, c, neg) {
   for (let i = 0; i < 4; i++) {
     const nr = r + dr[i];
     const nc = c + dc[i];
-    if (nr < 0 || nr >= R || nc < 0 || nc >= C || maps[nr][nc] === neg)
-      continue;
-    if (!visited[nr][nc]) blocks = [...blocks, ...DFS(maps, nr, nc, neg)];
+    if (nr < 0 || nr >= R || nc < 0 || nc >= C || maps[nr][nc] === 0) continue;
+    if (!visited[nr][nc]) blocks = [...blocks, ...tableDFS(maps, nr, nc)];
   }
   return blocks;
 }
@@ -31,13 +33,13 @@ function initVisited() {
   );
 }
 
-function getShape(target, neg) {
+function getShape(target) {
   initVisited();
   const shape = [];
   for (let r = 0; r < R; r++) {
     for (let c = 0; c < C; c++) {
-      if (target[r][c] !== neg && !visited[r][c])
-        shape.push(DFS(target, r, c, neg));
+      if (target[r][c] !== 0 && !visited[r][c])
+        shape.push(tableDFS(target, r, c));
     }
   }
 
@@ -93,29 +95,6 @@ function rotateBlock(arr) {
   return rotate;
 }
 
-function isFill(block1, block2) {
-  for (let i = 0; i < 4; i++) {
-    const b1 = block1.block.reduce((acc, r) => acc + r.join(""), "");
-    const b2 = block2.block.reduce((acc, r) => acc + r.join(""), "");
-
-    let chk = 0;
-    for (let i = 0; i < b1.length; i++) {
-      if (b1[i] === "1" && b1[i] === b2[i]) chk++;
-    }
-    if (block2.length === 3) {
-      console.log(chk);
-    }
-    if (chk === block1.length || chk === block2.length) return true;
-
-    block2 = {
-      length: block2.length,
-      block: rotateBlock(block2.block),
-    };
-  }
-
-  return false;
-}
-
 function isEqual(block1, block2) {
   for (let i = 0; i < 4; i++) {
     const b1 = block1.reduce((acc, r) => acc + r.join(""), "");
@@ -128,61 +107,45 @@ function isEqual(block1, block2) {
   return false;
 }
 
-function isEqual2(block1, block2) {
-  for (let i = 0; i < 4; i++) {
-    const [r1, c1] = [block1.length, block1[0].length];
-    const [r2, c2] = [block2.length, block2[0].length];
-    if (r1 !== r2 || c1 !== c2) {
-      block2 = rotateBlock(block2);
-      continue;
-    }
+function boardDFS(maps, r, c, allRoute, route) {
+  visited[r][c] = true;
 
-    let r = 0;
-    let c = 0;
-    chkCell: for (; r < r1; r++) {
-      for (; c < c1; c++) {
-        if (block1[r][c] !== block2[r][c]) break chkCell;
-      }
+  allRoute = [...allRoute, [r, c]];
+  route = [...route, [r, c]];
+  for (let i = 0; i < posBlock.length; i++) {
+    if (isEqual(makeBlock(route).block, posBlock[i].block)) {
+      posBlock = [...posBlock.slice(0, i), ...posBlock.slice(i + 1)];
+      route = [];
     }
-    if (r === r1 && c === c1) return true;
-
-    block2 = rotateBlock(block2);
   }
 
-  return false;
+  for (let i = 0; i < 4; i++) {
+    const nr = r + dr[i];
+    const nc = c + dc[i];
+    if (nr < 0 || nr >= R || nc < 0 || nc >= C || maps[nr][nc] === 0) continue;
+    if (!visited[nr][nc]) {
+      boardDFS(maps, nr, nc, allRoute, route, posBlock);
+    }
+  }
 }
 
 function solution(gameBoard, table) {
   R = gameBoard.length;
   C = gameBoard[0].length;
 
-  // DFS 공간 탐색
-  const boardEmptyShape = getShape(gameBoard, 1);
+  // 사용가능한 블록 구하기
   const posBlockShape = getShape(table, 0);
+  posBlock = posBlockShape.map(makeBlock).sort((a, b) => b.length - a.length);
 
-  const boardEmpty = boardEmptyShape
-    .map(makeBlock)
-    .sort((a, b) => a.length - b.length);
-  let posBlock = posBlockShape
-    .map(makeBlock)
-    .sort((a, b) => b.length - a.length);
-
-  let answer = 0;
-  for (let i = boardEmpty.length - 1; i >= 0; i--) {
-    const empty = boardEmpty[i];
-    let pos;
-    for (let j = 0; j < posBlock.length; j++) {
-      if (empty.length > posBlock.length) continue;
-      if (isEqual(empty.block, posBlock[j].block)) {
-        pos = posBlock[j];
-        posBlock = [...posBlock.slice(0, j), ...posBlock.slice(j + 1)];
-        break;
+  initVisited();
+  for (let r = 0; r < R; r++) {
+    for (let c = 0; c < C; c++) {
+      if (gameBoard[r][c] !== 1 && !visited[r][c]) {
+        boardDFS(gameBoard, r, c, [], []);
+        console.log(posBlock);
       }
     }
-    if (pos) answer += pos.length;
   }
-
-  return answer;
 }
 
 console.log(
