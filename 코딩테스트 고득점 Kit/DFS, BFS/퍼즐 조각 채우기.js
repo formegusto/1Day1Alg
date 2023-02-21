@@ -117,38 +117,14 @@ function isFill(block1, block2) {
 }
 
 function isEqual(block1, block2) {
+  const b1 = JSON.stringify(block1);
   for (let i = 0; i < 4; i++) {
-    const b1 = block1.reduce((acc, r) => acc + r.join(""), "");
-    const b2 = block2.reduce((acc, r) => acc + r.join(""), "");
+    const b2 = JSON.stringify(block2);
 
     if (b1 === b2) return true;
 
     block2 = rotateBlock(block2);
   }
-  return false;
-}
-
-function isEqual2(block1, block2) {
-  for (let i = 0; i < 4; i++) {
-    const [r1, c1] = [block1.length, block1[0].length];
-    const [r2, c2] = [block2.length, block2[0].length];
-    if (r1 !== r2 || c1 !== c2) {
-      block2 = rotateBlock(block2);
-      continue;
-    }
-
-    let r = 0;
-    let c = 0;
-    chkCell: for (; r < r1; r++) {
-      for (; c < c1; c++) {
-        if (block1[r][c] !== block2[r][c]) break chkCell;
-      }
-    }
-    if (r === r1 && c === c1) return true;
-
-    block2 = rotateBlock(block2);
-  }
-
   return false;
 }
 
@@ -172,7 +148,6 @@ function solution(gameBoard, table) {
     const empty = boardEmpty[i];
     let pos;
     for (let j = 0; j < posBlock.length; j++) {
-      if (empty.length > posBlock.length) continue;
       if (isEqual(empty.block, posBlock[j].block)) {
         pos = posBlock[j];
         posBlock = [...posBlock.slice(0, j), ...posBlock.slice(j + 1)];

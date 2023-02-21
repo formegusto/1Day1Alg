@@ -88,6 +88,9 @@ function solution(game_board, table) {
     }
   }
 
+  console.log(spaces);
+  console.log(puzzles);
+
   for (let space of spaces) {
     for (let i = 0; i < puzzles.length; i++) {
       if (JSON.stringify(space) === JSON.stringify(puzzles[i])) {
@@ -100,3 +103,24 @@ function solution(game_board, table) {
 
   return answer;
 }
+
+console.log(
+  solution(
+    [
+      [1, 1, 0, 0, 1, 0],
+      [0, 0, 1, 0, 1, 0],
+      [0, 1, 1, 0, 0, 1],
+      [1, 1, 0, 1, 1, 1],
+      [1, 0, 0, 0, 1, 0],
+      [0, 1, 1, 1, 0, 0],
+    ],
+    [
+      [1, 0, 0, 1, 1, 0],
+      [1, 0, 1, 0, 1, 0],
+      [0, 1, 1, 0, 1, 1],
+      [0, 0, 1, 0, 0, 0],
+      [1, 1, 0, 1, 1, 0],
+      [0, 1, 0, 0, 0, 0],
+    ]
+  )
+);

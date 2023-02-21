@@ -96,9 +96,9 @@ function rotateBlock(arr) {
 }
 
 function isEqual(block1, block2) {
+  const b1 = JSON.stringify(block1);
   for (let i = 0; i < 4; i++) {
-    const b1 = block1.reduce((acc, r) => acc + r.join(""), "");
-    const b2 = block2.reduce((acc, r) => acc + r.join(""), "");
+    const b2 = JSON.stringify(block2);
 
     if (b1 === b2) return true;
 
