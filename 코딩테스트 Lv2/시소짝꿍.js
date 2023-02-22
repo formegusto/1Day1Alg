@@ -19,3 +19,5 @@ function solution(weights) {
 }
 
 solution([100, 180, 360, 100, 270]);
+
+// https://taehoung0102.tistory.com/265
