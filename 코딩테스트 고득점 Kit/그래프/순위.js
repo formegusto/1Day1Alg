@@ -30,7 +30,7 @@ function solution(n, results) {
   //   console.log(graph);
   let answer = 0;
   for (let i = 0; i < graph.length; i++)
-    if (!graph.filter((v) => v === Infinity).length) answer++;
+    if (!graph[i].filter((v) => v === Infinity).length) answer++;
 
   return answer;
 }
