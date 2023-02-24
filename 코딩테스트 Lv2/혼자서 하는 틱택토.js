@@ -55,7 +55,7 @@ function solution(board) {
     const pos = turn === "O" ? homeQ.shift() : awayQ.shift();
     if (!pos) return 0;
     if (pos && isEnd) {
-      //   console.log(homeQ, awayQ, isEnd, homeQ.length);
+      // home에 의해서 끝나는 경우, 마지막 공격이었을 수도 있음
       if (homeQ.length - 1 === awayQ.length) return 1;
       else return 0;
     }
