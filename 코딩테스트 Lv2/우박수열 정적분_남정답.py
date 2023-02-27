@@ -27,4 +27,4 @@ def solution(k, ranges):
         answer.append(cal_integer)
     return answer
 
-print(solution(5, [[0,0],[0,-1],[2,-3],[3,-3], [0, -100]]))
+print(solution(5, [[0,0],[0,-1],[2,-3],[3,-3], [0, -100], [0, -4], [0, -5], [0, -6], [1, 0], [1, -1], [1, -5]]))

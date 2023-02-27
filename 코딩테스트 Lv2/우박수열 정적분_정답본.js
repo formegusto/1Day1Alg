@@ -13,6 +13,7 @@ function solution(k, ranges) {
 
   // 1. get collatz
   const yList = collatz(k);
+  const collatzCnt = yList.length - 1;
 
   // 2. 누적분
   const culCal = [0];
@@ -23,16 +24,10 @@ function solution(k, ranges) {
 
   for (let i = 0; i < ranges.length; i++) {
     let [start, end] = ranges[i];
-    end = Math.abs(k  end);
-    if (end && start > end) answer.push(0);
-    else if (start < end) answer.push(-1);
-
-
-
-    if(){
-      end = k - (end % k);
-      answer.push(culCal[end] - culCal[start]);
-    }
+    end = collatzCnt + end;
+    if (end && start === end) answer.push(0);
+    else if (start > end) answer.push(-1);
+    else answer.push(culCal[end] - culCal[start]);
   }
 
   return answer;
@@ -45,5 +40,11 @@ console.log(
     [2, -3],
     [3, -3],
     [0, -100],
+    [0, -4],
+    [0, -5],
+    [0, -6],
+    [1, 0],
+    [1, -1],
+    [1, -5],
   ])
 );
