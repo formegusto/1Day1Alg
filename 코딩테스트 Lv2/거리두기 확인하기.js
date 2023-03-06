@@ -13,13 +13,11 @@ function DFS(place, r, c, path, isPos, pi) {
     if (nr < 0 || nr >= R) continue;
     if (nc < 0 || nc >= C) continue;
 
-    if (place[nr][nc] === "P") {
-      if (place[r][c] !== "X") {
+    if (!visited[nr][nc]) {
+      if (place[nr][nc] === "P" && place[r][c] !== "X") {
         isPos[pi] = 0;
-        break;
-      }
+      } else DFS(place, nr, nc, [...path, place[r][c]], isPos, pi);
     }
-    if (!visited[nr][nc]) DFS(place, nr, nc, [...path, place[r][c]], isPos, pi);
   }
 }
 
@@ -36,24 +34,18 @@ function initVisited() {
 
 function solution(places) {
   let answer = Array(places.length).fill(1);
-  let place = places[0];
 
-  initVisited();
-
-  console.log(answer);
-  DFS(place, 0, 0, [], answer, 0);
-  console.log(answer);
-
-  //   for (let i = 0; i < places.length; i++) {
-  //     const place = places[i];
-  //     for (let r = 0; r < place.length; r++) {
-  //       for (let c = 0; c < place[r].length; c++) {
-  //         if (place[r][c] === "P") {
-  //           console.log(r, c, check(place, r, c));
-  //         }
-  //       }
-  //     }
-  //   }
+  for (let p = 0; p < places.length; p++) {
+    const place = places[p];
+    for (let i = 0; i < place.length; i++) {
+      for (let j = 0; j < place[i].length; j++) {
+        if (place[i][j] === "P") {
+          initVisited();
+          DFS(place, i, j, [], answer, p);
+        }
+      }
+    }
+  }
 
   return answer;
 }
