@@ -1,3 +1,5 @@
+// dp 없는게 빠름 단순히 이전결과에 붙이는 작업이기 때문에
+
 function isRight(u) {
   if (u[0] === ")") return false;
   return true;
