@@ -13,70 +13,32 @@ function combination(arr, r) {
   return result;
 }
 
-// function solution(orders, course) {
-//   const answer = [];
-
-//   const map = {};
-//   for (let i = 0; i < orders.length; i++) {
-//     for (let j = 0; j < course.length; j++) {
-//       const comb = combination(orders[i], course[j]);
-//       for (let k = 0; k < comb.length; k++) {
-//         const c = comb[k].join("");
-//         if (map[c] && map[c] !== -1) map[c]++;
-//         else if (!map[c]) map[c] = 1;
-
-//         if (map[c] >= 2) {
-//           answer.push(c);
-//           map[c] = -1;
-//         }
-//       }
-//     }
-//   }
-// }
-
-//   return answer;
-// }
-// function solution(orders, course) {
-//   let answer = [];
-
-//   orders.sort((a, b) => a.length - b.length);
-//   let oi = 0;
-//   let ci = 0;
-//   while (ci < course.length) {
-//     const c = course[ci++];
-
-//     while (oi < orders.length && orders[oi].length <= c) {
-//       let cnt = 1;
-//       for (let i = oi + 1; i < orders.length; i++) {
-//         const match = orders[i].match(new RegExp(`[${orders[oi]}]`, "g"));
-//         if (match && match.length === c) cnt++;
-//       }
-
-//       if (cnt >= 2) answer.push(orders[oi]);
-//       oi++;
-//     }
-//   }
-
-//   return answer.sort();
-// }
-
 function solution(orders, course) {
   let answer = [];
 
   let maxValues = Array(course.length).fill(0);
-
+  let memory = {};
   let map = {};
   orders.sort((a, b) => a.length - b.length);
   for (let i = 0; i < orders.length; i++) {
     for (let j = i + 1; j < orders.length; j++) {
       const match = orders[j].match(new RegExp(`[${orders[i]}]`, "g"));
       if (!match || match.length === 1) continue;
+      if (memory[match]) {
+        for (let m = 0; m < memory[match].length; m++) {
+          map[memory[match][m]].add(i);
+          map[memory[match][m]].add(j);
+        }
+        continue;
+      }
 
+      memory[match] = [];
       for (let c = 0; c < course.length; c++) {
         if (match.length < course[c]) break;
         const comb = combination(match, course[c]);
         for (let k = 0; k < comb.length; k++) {
           const inData = comb[k].join("");
+          memory[match].push(inData);
           if (map[inData]) {
             map[inData].add(i);
             map[inData].add(j);

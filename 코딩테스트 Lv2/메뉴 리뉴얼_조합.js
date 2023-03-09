@@ -1,23 +1,30 @@
+function combination(arr, r) {
+  if (r === 1) return arr.map((v) => [v]);
+
+  const result = [];
+  for (let i = 0; i < arr.length; i++) {
+    const rest = [...arr.slice(i + 1)];
+    const comb = combination(rest, r - 1);
+    const attached = comb.map((p) => [arr[i], ...p]);
+
+    result.push(...attached);
+  }
+
+  return result;
+}
+
 function solution(orders, course) {
   const answer = [];
 
   let m = {};
-  function dfs(root, order, limit) {
-    if (root.length === limit) {
-      if (m[root]) m[root]++;
-      else m[root] = 1;
-    }
-
-    for (let i = 0; i < order.length; i++) {
-      if (root.includes(order[i]) || root[root.length - 1] > order[i]) continue;
-      dfs(root + order[i], order, limit);
-    }
-  }
-
-  for (let c = 0; c < course.length; c++) {
-    for (let o = 0; o < orders.length; o++) {
-      if (orders[o].length < course[c]) continue;
-      dfs("", [...orders[o]].sort().join(""), course[c]);
+  for (let o = 0; o < orders.length; o++) {
+    for (let c = 0; c < course.length; c++) {
+      const combs = combination([...orders[o]].sort(), course[c]);
+      for (let i = 0; i < combs.length; i++) {
+        const inData = combs[i].join("");
+        if (m[inData]) m[inData]++;
+        else m[inData] = 1;
+      }
     }
   }
 
