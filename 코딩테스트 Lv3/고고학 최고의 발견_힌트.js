@@ -15,144 +15,70 @@ ex) 3x3 시계 집합 에서 첫 행을 각각 a b c 번 돌려 12 시 3시 6시
 
 */
 function solution(clockHands) {
-  const length = clockHands.length;
+  let answer = Infinity;
 
-  clockHands = clockHands.map((el) => el.map((el) => (el ? 4 - el : el)));
+  const len = clockHands.length;
 
-  const getFixedNum = (num) => {
-    while (num >= 4) num -= 4;
-    while (num < 0) num += 4;
-
-    return num;
+  // 해당 값을 회전시킨 결과 값 반환
+  const rotate = (idx, a) => {
+    idx += a;
+    if (idx < 0) return idx + 4;
+    if (idx > 3) return idx - 4;
+    return idx;
   };
 
-  const calculator = (arr) => {
-    for (let i = 0; i < length; i++) {
-      for (let j = 0; j < length; j++) {
-        const value = arr[i][j];
-
-        if (arr[i + 1]) {
-          arr[i + 1][j] -= value;
-
-          if (arr[i + 1][j - 1] !== undefined) arr[i + 1][j - 1] -= value;
-          if (arr[i + 1][j + 1] !== undefined) arr[i + 1][j + 1] -= value;
-        }
-
-        if (arr[i + 2]) {
-          arr[i + 2][j] -= value;
-        }
-      }
-    }
-
-    return arr[length - 1].map((el) => getFixedNum(el));
-  };
-
-  const getLastColDiffByHeadIdxValue1 = (headIndex) => {
-    const map = new Array(length).fill().map((_el, idx) => {
-      const newArray = new Array(length).fill(0);
-
-      if (idx === 0) {
-        newArray[headIndex] = -1;
-
-        if (headIndex - 1 >= 0) newArray[headIndex - 1] = -1;
-        if (headIndex + 1 < length) newArray[headIndex + 1] = -1;
-      }
-
-      if (idx === 1) {
-        newArray[headIndex] = -1;
-      }
-
-      return newArray;
-    });
-
-    return calculator(map);
-  };
-
-  const headerOneValueAffectMap = new Array(length)
-    .fill()
-    .map((_el, idx) => getLastColDiffByHeadIdxValue1(idx));
-
-  const calculated = calculator(JSON.parse(JSON.stringify(clockHands)));
-
-  const counter = new Array(length).fill(0);
-  const validHeaders = [];
-
-  const increaseCounter = () => {
-    counter[length - 1] += 1;
-
-    for (let i = length - 1; i >= 0; i--) {
-      if (counter[i] >= 4) {
-        if (i === 0) {
-          counter[i] = -1;
-          return;
-        }
-
-        counter[i] = 0;
-        counter[i - 1] += 1;
-      }
+  // 상, 하, 좌, 우, 중 5개 값을 a만큼 회전
+  const rotatePlus = (x, y, table, a) => {
+    const targets = [
+      [x, y],
+      [x + 1, y],
+      [x - 1, y],
+      [x, y + 1],
+      [x, y - 1],
+    ];
+    for (const [tx, ty] of targets) {
+      if (tx < 0 || tx >= len || ty < 0 || ty >= len) continue;
+      table[tx][ty] = rotate(table[tx][ty], a);
     }
   };
 
-  while (true) {
-    if (counter[0] === -1) break;
-    let isValid = true;
+  // 퍼즐이 풀렸는지 확인
+  const isSolved = (table) => {
+    // 마지막 전까지는 모두 0으로 만들었으므로 마지막 행만 판별
+    const checker = table[len - 1].reduce((sum, cel) => sum + cel, 0);
+    return checker === 0;
+  };
 
-    for (let i = 0; i < length; i++) {
-      const targetSum =
-        calculated[i] +
-        headerOneValueAffectMap.reduce((acc, cur, index) => {
-          return acc + cur[i] * counter[index];
-        }, 0);
+  // 첫번째 줄 조작 이후 후처리, 결과값 갱신
+  const postProcess = (table, count) => {
+    console.log(table);
+    let result = count;
 
-      if (targetSum % 4 !== 0) {
-        isValid = false;
-        break;
+    for (let x = 1; x < len; x++) {
+      for (let y = 0; y < len; y++) {
+        const key = table[x - 1][y] ? 4 - table[x - 1][y] : 0;
+        rotatePlus(x, y, table, key);
+        result += key;
       }
     }
+    if (isSolved(table)) answer = Math.min(answer, result);
+  };
 
-    if (isValid) {
-      validHeaders.push([...counter]);
-    }
+  const setTable = (y, table, c) => {
+    const newTable = table.map((v) => [...v]);
+    rotatePlus(0, y, newTable, c);
+    return newTable;
+  };
 
-    increaseCounter();
-  }
+  // 첫번째 줄 조작 (조작 안함, 우측 회전, 좌측 회전, 180도 회전)후 후처리 호출
+  const dfs = (y, count, table) => {
+    if (y === len) return postProcess(table, count);
+    const cases = [0, 1, 2, 3];
+    for (const c of cases) dfs(y + 1, count + c, setTable(y, table, c));
+  };
 
-  const validMaps = validHeaders.map((header) => {
-    const map = new Array(length).fill().map((_, idx) => {
-      if (idx === 0) return header;
-
-      return new Array(length).fill(null);
-    });
-
-    for (let i = 0; i < length - 1; i++) {
-      for (let j = 0; j < length; j++) {
-        let sum = map[i][j];
-
-        if (map[i][j + 1]) sum += map[i][j + 1];
-        if (map[i][j - 1]) sum += map[i][j - 1];
-        if (map[i - 1]) sum += map[i - 1][j];
-
-        const resultValue = getFixedNum(clockHands[i][j] - sum);
-
-        map[i + 1][j] = resultValue;
-      }
-    }
-
-    return map;
-  });
-
-  return Math.min(
-    ...validMaps.map((map) =>
-      map.reduce((acc, cur) => {
-        return (
-          acc +
-          cur.reduce((acc, cur) => {
-            return acc + cur;
-          }, 0)
-        );
-      }, 0)
-    )
-  );
+  dfs(0, 0, clockHands);
+  return answer;
 }
 
 solution([
@@ -161,3 +87,12 @@ solution([
   [0, 3, 2, 0],
   [0, 3, 3, 3],
 ]);
+
+console.log(
+  solution([
+    [0, 1, 3, 0],
+    [1, 2, 0, 0],
+    [3, 0, 2, 2],
+    [0, 2, 0, 0],
+  ])
+);
