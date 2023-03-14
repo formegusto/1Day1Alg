@@ -10,9 +10,9 @@ def solution(n, lighthouse):
     def dfs(node, tree, visited):
         visited[node] = True
         children = [nn for nn in tree[node] if not visited[nn]]
+        print(children)
         on, off = 1, 0
         if not children:
-            print("not children",node)
             return on, off
         else:
             for child in children:
@@ -21,6 +21,9 @@ def solution(n, lighthouse):
                 off += child_on
             return on, off
         
+    import sys
+    sys.setrecursionlimit(100_000)
+
     return min(dfs(1, make_tree(), [False for _ in range(n + 1)]))
     
 
